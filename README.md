@@ -8,6 +8,8 @@ Using Mutexes: Demonstrates how to use mutexes to synchronize file access across
 
 Anti-Patterns: Illustrates dangerous practices that should be avoided to prevent data races.
 
+std::call_once : I used call_once in this code to ensure that the process of opening the file is executed only once, regardless of how many threads are accessing it.
+
 # std::call_once
 I used call_once in this code to ensure that the process of opening the file is executed only once, regardless of how many threads are accessing it. This guarantees that the file is opened properly without the risk of concurrent attempts to open it by multiple threads, providing thread-safe initialization.
 
