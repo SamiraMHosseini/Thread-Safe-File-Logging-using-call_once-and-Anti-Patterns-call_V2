@@ -26,4 +26,14 @@ Certain practices, if not handled correctly, can lead to data races and other sy
    they can write to it directly without going through the lock, leading to potential race conditions.
 2. # Bypassing Mutexes
    The process_ofstream method takes a function pointer that accepts an ofstream reference, and it directly passes the internal ofstream to that function without going through the mutex.
-   This is an anti-pattern because it completely bypasses the lock mechanism and allows unauthorized manipulation of the ofstream object, as demonstrated in the malicious function. This approach can lead to data corruption     and race conditions.
+   This is an anti-pattern because it completely bypasses the lock mechanism and allows unauthorized manipulation of the ofstream object, as demonstrated in the malicious function. This approach can lead to data corruption and race conditions.
+
+# Observations and Recommendations:
+
+Using std::call_once: std::call_once ensures that the file is opened only once. This is a good use of the function to prevent the file from being opened multiple times. However, remember that any errors that occur during the call to std::call_once will propagate and the flag will be set, preventing subsequent calls, even if the first call failed.
+
+Thread Safety: The two methods write_into_file and write_into_file_V2 use mutexes to guard against concurrent access, which is good for ensuring thread safety. But they're essentially doing the same thing, just with different methods of writing to the file.
+
+Duplicated File Opening Code: The code to open the file inside std::call_once is duplicated in both write_into_file and write_into_file_V2. You can create a private member function, say open_file(), and call it inside std::call_once to avoid this repetition.
+
+Resource Leak: Your logger uses RAII (Resource Acquisition Is Initialization) for managing the file's lifecycle, which is a good practice. The destructor of LogFile ensures the file is closed.
