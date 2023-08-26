@@ -3,11 +3,6 @@
 #include <thread>
 #include <mutex>
 
-#if 1
-
-
-#include <fstream>
-
 // Malicious function that can print to ofs without going through the lock
 void malicious(std::ofstream& ofs)
 {
@@ -110,7 +105,7 @@ void function_2()
 
 int main()
 {
-	LogFile logFile("C:\\Interview Summer 2023\\samira.txt");
+	LogFile logFile("C:\\test.txt");
 	std::jthread t1(function_1, std::ref(logFile));
 	std::jthread t2(function_2);
 	logFile.process_ofstream(malicious); // Invoking the malicious function
@@ -121,6 +116,3 @@ int main()
 		logFile.write_into_file_V2(msg); // Writing using method 2
 	}
 }
-
-
-#endif
